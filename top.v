@@ -25,7 +25,12 @@ module top(
     input rst_n, clk, left, right,
     output bell,
 		output [15:0] LED,
-		output en
+		output en,
+		output [2:0] sel,
+		output [6:0] segment
     );
-		musicbox test(SW, rst_n, clk, left, right, bell, LED, en);
+		wire [31:0] data;
+		assign data[3:0] = band;
+		musicbox test(SW, rst_n, clk, left, right, bell, LED, en, band);
+		seg seg1(clk, rst_n, data, sel, segment);
 endmodule

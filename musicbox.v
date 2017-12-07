@@ -25,7 +25,8 @@ module musicbox(
 	input rst_n, clk, left, right,
 	output reg bell,
 	output [15:0] LED,
-	output reg en
+	output reg en,
+	output reg [3:0] band
 );
 localparam pitch0 = 50000000/1865;
 localparam pitch1 = 50000000/1976;
@@ -40,11 +41,10 @@ localparam pitch9 = 50000000/3136;
 localparam pitch10 = 50000000/3322;
 localparam pitch11 = 50000000/3520;
 localparam pitch12 = 50000000/3729;
-localparam pitch13 = 50000000/2951;
+localparam pitch13 = 50000000/3951;
 localparam pitch14 = 50000000/4186;
 localparam pitch15 = 50000000/4434;
 integer tmp, cnt;
-reg [3:0] band;
 assign LED = tmp[23:8];
 always@(posedge clk or negedge rst_n or negedge left or negedge right)
 begin
