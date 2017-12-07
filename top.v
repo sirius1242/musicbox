@@ -30,9 +30,12 @@ module top(
 		output [6:0] segment
     );
 		wire [31:0] data;
-		assign data[4:0] = factor;
-		wire [4:0] factor;
+		assign data[2:0] = band;
+		wire [2:0] band;
 		//assign data = 32'h0000;
-		musicbox test(SW, rst_n, clk, left, right, bell, LED, en, factor);
+		no_fitter fit1(rst_n, clk, play);
+		no_fitter fit2(left, clk, dec);
+		no_fitter fit3(right, clk, inc);
+		musicbox test(SW, play, clk, dec, inc, bell, LED, en, band);
 		seg seg1(clk, rst_n, data, sel, segment);
 endmodule

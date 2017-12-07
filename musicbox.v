@@ -26,7 +26,7 @@ module musicbox(
 	output reg bell,
 	output [15:0] LED,
 	output reg en,
-	output [4:0] factor
+	output reg [2:0] band
 );
 localparam pitch0 = 50000000/1865;
 localparam pitch1 = 50000000/1976;
@@ -46,7 +46,7 @@ localparam pitch14 = 50000000/4186;
 localparam pitch15 = 50000000/4434;
 integer tmp, cnt;
 assign LED = tmp[23:8];
-reg [3:0] band;
+wire [4:0] factor;
 assign factor = 2 ** band;
 always@(posedge clk or negedge rst_n or negedge left or negedge right)
 begin
@@ -69,7 +69,7 @@ begin
 		bell <= 0;
 		band <= band + 1;
 	end
-	else if(cnt === 0)
+	else if(cnt == 0)
 	begin
 		case(SW)
 			16'h0001: tmp <= factor * pitch0;
