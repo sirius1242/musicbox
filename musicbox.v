@@ -26,7 +26,7 @@ module musicbox(
 	output reg bell,
 	output [15:0] LED,
 	output reg en,
-	output reg [3:0] band
+	output [4:0] factor
 );
 localparam pitch0 = 50000000/1865;
 localparam pitch1 = 50000000/1976;
@@ -46,6 +46,8 @@ localparam pitch14 = 50000000/4186;
 localparam pitch15 = 50000000/4434;
 integer tmp, cnt;
 assign LED = tmp[23:8];
+reg [3:0] band;
+assign factor = 2 ** band;
 always@(posedge clk or negedge rst_n or negedge left or negedge right)
 begin
 	if(~rst_n)
@@ -53,31 +55,39 @@ begin
 		cnt <= 0;
 		bell <= 0;
 		en <= ~en;
-		band <= 8'h4;
+		band <= 8'h2;
 	end
 	else if(~left)
+	begin
+		cnt <= 0;
+		bell <= 0;
 		band <= band - 1;
+	end
 	else if(~right)
+	begin
+		cnt <= 0;
+		bell <= 0;
 		band <= band + 1;
+	end
 	else if(cnt === 0)
 	begin
 		case(SW)
-			16'h0001: tmp <= band * pitch0;
-			16'h0002: tmp <= band * pitch1;
-			16'h0004: tmp <= band * pitch2;
-			16'h0008: tmp <= band * pitch3;
-			16'h0010: tmp <= band * pitch4;
-			16'h0020: tmp <= band * pitch5;
-			16'h0040: tmp <= band * pitch6;
-			16'h0080: tmp <= band * pitch7;
-			16'h0100: tmp <= band * pitch8;
-			16'h0200: tmp <= band * pitch9;
-			16'h0400: tmp <= band * pitch10;
-			16'h0800: tmp <= band * pitch11;
-			16'h1000: tmp <= band * pitch12;
-			16'h2000: tmp <= band * pitch13;
-			16'h4000: tmp <= band * pitch14;
-			16'h8000: tmp <= band * pitch15;
+			16'h0001: tmp <= factor * pitch0;
+			16'h0002: tmp <= factor * pitch1;
+			16'h0004: tmp <= factor * pitch2;
+			16'h0008: tmp <= factor * pitch3;
+			16'h0010: tmp <= factor * pitch4;
+			16'h0020: tmp <= factor * pitch5;
+			16'h0040: tmp <= factor * pitch6;
+			16'h0080: tmp <= factor * pitch7;
+			16'h0100: tmp <= factor * pitch8;
+			16'h0200: tmp <= factor * pitch9;
+			16'h0400: tmp <= factor * pitch10;
+			16'h0800: tmp <= factor * pitch11;
+			16'h1000: tmp <= factor * pitch12;
+			16'h2000: tmp <= factor * pitch13;
+			16'h4000: tmp <= factor * pitch14;
+			16'h8000: tmp <= factor * pitch15;
 			default: tmp <= 0;
 		endcase
 		cnt <= cnt+1;

@@ -22,28 +22,28 @@
 
 module encode(
 	input wire [3:0] tmp,
-	output reg [6:0] data
+	output reg [6:0] segment
 );
 always@(*)
 begin
 	case (tmp)
-		0:  data = 7'b100_0000;
-		1:  data = 7'b111_1001;
-		2:  data = 7'b010_0100;
-		3:  data = 7'b011_0000;
-		4:  data = 7'b001_1001;
-		5:  data = 7'b001_0010;
-		6:  data = 7'b000_0010;
-		7:  data = 7'b111_1000;
-		8:  data = 7'b000_0000;
-		9:  data = 7'b001_0000; 
-		10:  data = 7'b000_1000;
-		11:  data = 7'b000_0011;
-		12:  data = 7'b100_0110;
-		13:  data = 7'b010_0001;
-		14:  data = 7'b000_0110;
-		15:  data = 7'b000_1110;
-		default:  data = 7'b000_0000;
+		0:  segment = 7'b100_0000;
+		1:  segment = 7'b111_1001;
+		2:  segment = 7'b010_0100;
+		3:  segment = 7'b011_0000;
+		4:  segment = 7'b001_1001;
+		5:  segment = 7'b001_0010;
+		6:  segment = 7'b000_0010;
+		7:  segment = 7'b111_1000;
+		8:  segment = 7'b000_0000;
+		9:  segment = 7'b001_0000; 
+		10:  segment = 7'b000_1000;
+		11:  segment = 7'b000_0011;
+		12:  segment = 7'b100_0110;
+		13:  segment = 7'b010_0001;
+		14:  segment = 7'b000_0110;
+		15:  segment = 7'b000_1110;
+		default:  segment = 7'b000_0000;
 	endcase
 end
 endmodule
@@ -59,7 +59,7 @@ module seg(
 	reg en;
 	reg [3:0] tmp;
 	initial sel = 3'b000;
-	encode encode1(tmp,data);
+	encode encode1(tmp,segment);
 	always@(posedge clk or negedge rst_n)
 	begin
 		if (~rst_n)
@@ -68,7 +68,7 @@ module seg(
 		cnt = 16'h0000;
 		else if (cnt == mili-1)
 		begin
-			if (sel != 3'b011)
+			if (sel != 3'b111)
 				sel <= sel + 1;
 			else
 				sel <= 3'b000;
