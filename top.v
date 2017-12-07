@@ -22,9 +22,10 @@
 
 module top(
     input [15:0] SW,
-    input rst_n, clk,
+    input rst_n, clk, left, right,
     output bell,
-		output [15:0] LED
+		output [15:0] LED,
+		output en
     );
-		musicbox test(SW, rst_n, clk, bell, LED);
+		musicbox test(SW, rst_n, clk, left, right, bell, LED, en);
 endmodule
