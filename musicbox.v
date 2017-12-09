@@ -22,7 +22,7 @@
 
 module musicbox(
 	input [15:0] SW,
-	input rst_n, clk, left, right,
+	input rst_n, pause, clk, left, right,
 	output reg bell,
 	output [15:0] LED,
 	output reg en,
@@ -48,27 +48,21 @@ integer tmp, cnt;
 assign LED = tmp[23:8];
 wire [4:0] factor;
 assign factor = 2 ** band;
-always@(posedge clk or negedge rst_n or negedge left or negedge right)
+always@(posedge clk or negedge rst_n)
 begin
 	if(~rst_n)
 	begin
 		cnt <= 0;
 		bell <= 0;
+		en <= 0;
+		band <= 3'h2;
+	end
+	else if(pause)
 		en <= ~en;
-		band <= 8'h2;
-	end
-	else if(~left)
-	begin
-		cnt <= 0;
-		bell <= 0;
+	else if(left)
 		band <= band - 1;
-	end
-	else if(~right)
-	begin
-		cnt <= 0;
-		bell <= 0;
+	else if(right)
 		band <= band + 1;
-	end
 	else if(cnt == 0)
 	begin
 		case(SW)

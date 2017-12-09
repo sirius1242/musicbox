@@ -21,14 +21,16 @@
 
 
 module no_fitter(
-	input raw, clk,
+	input raw, rst_n, clk,
 	output reg en 
 );
 localparam milli = 50000000 / 1000;
 integer cnt;
-always@(posedge clk)
+always@(posedge clk or negedge rst_n)
 begin
-	if(~raw)
+	if(~rst_n)
+		cnt <= 0;
+	else if(raw)
 		cnt <= 0;
 	else if(cnt <= milli)
 		cnt <= cnt + 1;
