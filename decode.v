@@ -52,6 +52,7 @@ begin
 	begin
 		tmp <= time_len * quarter;
 		cnt <= cnt + 1;
+		signal[i] <= i?1:0;
 	end
 	else if(tmp == 0)
 		en <= 0;
@@ -63,10 +64,5 @@ begin
 	end
 	else if(en == 1)
 		cnt <= cnt + 1;
-end
-always@(*)
-begin
-	if(i > 0)
-		signal[i] = 1;
 end
 endmodule

@@ -83,6 +83,7 @@ module top(
 		wire [11:0] q_a, q_b;
 		reg wen_c = 0;
 		wire pause, dec, inc;
+		assign LED = in;
 		no_fitter fit1(play, rst_n, clk, pause);
 		no_fitter fit2(left, rst_n, clk, dec);
 		no_fitter fit3(right, rst_n, clk, inc);
@@ -90,6 +91,7 @@ module top(
 		model_ctl model_test(clk, rst_n, mode_chg, SW, signal, electone, music_box, writing, model, in, adj);
 		regfile reg1(clk, rst_n, addr_a, addr_b,  addr_c, data_c, wen_c, q_a, q_b);
 		read read_box(q_a, clk, rst_n, pause, signal, bandi, addr_a, en_2);
-		musicbox test(in, rst_n, pause, clk, dec, inc, adj, bandi, bell, LED, en, band);
+		musicbox test(in, rst_n, pause, clk, dec, inc, adj, bandi, bell, en, band);
+		//musicbox test(in, rst_n, pause, clk, dec, inc, adj, bandi, bell, LED, en, band);
 		seg seg1(clk, rst_n, data, sel, segment);
 		endmodule
