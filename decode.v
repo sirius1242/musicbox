@@ -20,31 +20,53 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 module read(
-	input [11:0] data, clk, rst_n,
-	output [15:0] signal, [2:0] band, [4:0] time_len, [15:0] addr_a
+	input [11:0] data,
+	input clk, rst_n, pause,
+	output reg [15:0] signal, [2:0] band, reg [15:0] addr_a,
+ 	output reg en
 );
 wire [3:0] i;
+wire [4:0] time_len;
 localparam quarter = 50000000 / 16;
-integer tmp, cnt;
+reg [31:0] tmp;
+//reg en; 
+integer cnt;
 assign i = data[11:8];
 assign band = data[7:5];
 assign time_len = data[4:0];
-assign tmp = signal * quarter;
 always@(posedge clk or negedge rst_n)
 begin
 	if(~rst_n)
+	begin
 		cnt <= 0;
-	else if(cnt <= tmp)
+		addr_a <= 0;
+		signal <= 0;
+		en <= 0;
+		tmp <= 16 * quarter;
+	end
+	else if(pause)
+		en <= ~en;
+	else if(~en)
+		cnt <= cnt;
+	else if(cnt == 0)
+	begin
+		tmp <= time_len * quarter;
 		cnt <= cnt + 1;
-	else if(time_len == 0)
+	end
+	else if(tmp == 0)
+		en <= 0;
+	else if(cnt >= tmp)
+	begin
 		cnt <= 0;
-	else if(cnt == tmp)
-		addr_a += 1;
+		addr_a <= addr_a + 1;
+		signal <= 0;
+	end
+	else if(en == 1)
+		cnt <= cnt + 1;
 end
 always@(*)
 begin
-	signal = 0;
-	if(i >= 0)
-		signal[i+1] = 1;
+	if(i > 0)
+		signal[i] = 1;
 end
 endmodule

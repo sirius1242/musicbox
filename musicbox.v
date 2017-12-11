@@ -23,6 +23,7 @@
 module musicbox(
 	input [15:0] SW,
 	input rst_n, pause, clk, left, right,
+	input adj, [2:0]bandi,
 	output reg bell,
 	output [15:0] LED,
 	output reg en,
@@ -65,6 +66,10 @@ begin
 		band <= band + 1;
 	else if(cnt == 0)
 	begin
+		if(adj)
+		begin
+			band = bandi;
+		end
 		case(SW)
 			16'h0001: tmp <= factor * pitch0;
 			16'h0002: tmp <= factor * pitch1;
