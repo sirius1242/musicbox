@@ -45,7 +45,8 @@ begin
 				next = inc;
 				pre = dec;
 				data[2:0] = sel;
-				data[18:16] = len;
+				//data[18:16] = len;
+				data[18:16] = 3;
 			end
 		2'b01 : 
 			begin
@@ -95,6 +96,7 @@ module top(
 		wire [15:0] addr_a, addr_b, addr_c;
 		wire [15:0] addr;
 		reg [11:0] data_c;
+		wire [31:0] data;
 		wire [11:0] q_a, q_b;
 		reg wen_c = 0;
 		wire pause, dec, inc, add, redu, pre, next;
@@ -106,7 +108,7 @@ module top(
 		no_fitter fit4(mode, rst_n, clk, mode_chg);
 		model_ctl model_test(clk, rst_n, mode_chg, SW, signal, inc, dec, band, sel_2, len, electone, music_box, writing, model, in, add, redu, pre, next, data, adj);
 		regfile reg1(clk, rst_n, addr_a, addr_b,  addr_c, data_c, wen_c, sel_2, q_a, q_b, len, addr);
-		read read_box(q_a, clk, rst_n, addr, pause, pre, next, len, signal, bandi, addr_a, en_2, sel_2);
+		read read_box(q_a, clk, rst_n, addr, pause, pre, next, 3'b011, signal, bandi, addr_a, en_2, sel_2);
 		musicbox test(in, rst_n, pause, clk, redu, add, adj, bandi, bell, en, band);
 		//musicbox test(in, rst_n, pause, clk, dec, inc, adj, bandi, bell, LED, en, band);
 		seg seg1(clk, rst_n, data, sel, segment);

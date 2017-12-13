@@ -36,7 +36,7 @@ module regfile(
 	);
 	integer i;
 	reg [11:0] data [0:800];
-	wire [15:0] addr [0:1];
+	wire [15:0] addr [0:2];
 	assign len = 3'b011;
 	assign addr[0] = 0;
 	assign addr[1] = 152;
