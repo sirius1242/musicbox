@@ -97,8 +97,10 @@ module top(
 		wire [15:0] addr;
 		reg [11:0] data_c;
 		wire [31:0] data;
+		wire [11:0] read;
+		assign data [31:20] = read;
 		wire [11:0] q_a, q_b;
-		reg wen_c = 0;
+		//reg wen_c = 0;
 		wire pause, dec, inc, add, redu, pre, next;
 		wire [2:0] sel_2;
 		assign LED = in;
@@ -112,4 +114,5 @@ module top(
 		musicbox test(in, rst_n, pause, clk, redu, add, adj, bandi, bell, en, band);
 		//musicbox test(in, rst_n, pause, clk, dec, inc, adj, bandi, bell, LED, en, band);
 		seg seg1(clk, rst_n, data, sel, segment);
+		recv recv_uart(clk, rst_n, UART_RX, read, wen_c, addr_c);
 		endmodule

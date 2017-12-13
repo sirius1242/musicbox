@@ -69,16 +69,17 @@ begin
 		en <= ~en;
 	else if(~en)
 		cnt <= cnt;
+	else if(tmp == 0)
+	begin
+		cnt <= 0;
+		addr_a <= addr;
+		tmp <= 16*quarter;
+	end
 	else if(cnt == 0)
 	begin
 		tmp <= time_len * quarter;
 		cnt <= cnt + 1;
 		signal[i] <= i?1:0;
-	end
-	else if(tmp == 0)
-	begin
-		en <= 0;
-		addr_a <= addr;
 	end
 	else if(cnt >= tmp + milli)
 	begin
