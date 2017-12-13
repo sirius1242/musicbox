@@ -21,14 +21,18 @@
 
 module read(
 	input [11:0] data,
-	input clk, rst_n, pause,
+	input clk, rst_n,
+	input [15:0] addr,
+	input pause, pre, next, [2:0] len,
 	output reg [15:0] signal, [2:0] band, reg [15:0] addr_a,
- 	output reg en
+ 	output reg en, reg [2:0] sel
 );
 wire [3:0] i;
 wire [4:0] time_len;
-localparam quarter = 50000000 / 16;
+localparam quarter = 50000000 / 8;
 reg [31:0] tmp;
+reg flag;
+
 //reg en; 
 integer cnt;
 assign i = data[11:8];
@@ -42,7 +46,23 @@ begin
 		addr_a <= 0;
 		signal <= 0;
 		en <= 0;
+		sel <= 0;
 		tmp <= 16 * quarter;
+	end
+	else if(next)
+	begin
+		sel <= (sel==len)? 0:sel+1;
+		flag <= 1;
+	end
+	else if(pre)
+	begin
+		sel <= (sel==0)? len:sel-1 ;
+		flag <= 1;
+	end
+	else if(flag == 1)
+	begin
+		flag <= 0;
+		addr_a <= addr;
 	end
 	else if(pause)
 		en <= ~en;
