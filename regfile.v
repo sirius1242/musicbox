@@ -36,12 +36,12 @@ module regfile(
 	);
 	integer i;
 	reg [11:0] data [0:1000];
-	wire [15:0] addr [0:2];
+	wire [15:0] addr [0:3];
 	assign len = 3'b011;
 	assign addr[0] = 0;
 	assign addr[1] = 152;
-	assign addr[3] = 317;
-	assign addr[2] = 711;
+	assign addr[2] = 317;
+	assign addr[3] = 711;
 	assign addr_d = addr[sel];
 	always@(posedge clk or negedge rst_n)
 	begin

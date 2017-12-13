@@ -52,12 +52,12 @@ begin
 	end
 	else if(next)
 	begin
-		sel <= (sel>=len)? 0:sel+1;
+		sel <= (sel == len)? 0:sel + 1;
 		flag <= 1;
 	end
 	else if(pre)
 	begin
-		sel <= (sel==0)? len:sel-1 ;
+		sel <= (sel == 0)? len:sel - 1;
 		flag <= 1;
 	end
 	else if(flag == 1)
@@ -76,7 +76,10 @@ begin
 		signal[i] <= i?1:0;
 	end
 	else if(tmp == 0)
+	begin
 		en <= 0;
+		addr_a <= addr;
+	end
 	else if(cnt >= tmp + milli)
 	begin
 		cnt <= 0;
