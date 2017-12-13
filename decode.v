@@ -30,6 +30,7 @@ module read(
 wire [3:0] i;
 wire [4:0] time_len;
 localparam quarter = 50000000 / 8;
+localparam milli = 50000000 / 1000;
 reg [31:0] tmp;
 reg flag;
 
@@ -51,7 +52,7 @@ begin
 	end
 	else if(next)
 	begin
-		sel <= (sel==len)? 0:sel+1;
+		sel <= (sel>=len)? 0:sel+1;
 		flag <= 1;
 	end
 	else if(pre)
@@ -76,10 +77,15 @@ begin
 	end
 	else if(tmp == 0)
 		en <= 0;
-	else if(cnt >= tmp)
+	else if(cnt >= tmp + milli)
 	begin
 		cnt <= 0;
 		addr_a <= addr_a + 1;
+	end
+	else if(cnt >= tmp)
+	begin
+		//cnt <= 0;
+		cnt <= cnt + 1;
 		signal <= 0;
 	end
 	else if(en == 1)

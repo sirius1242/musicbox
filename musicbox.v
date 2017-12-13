@@ -47,7 +47,7 @@ localparam pitch14 = 50000000/4186;
 localparam pitch15 = 50000000/4434;
 integer tmp, cnt;
 //assign LED = tmp[31:16];
-wire [4:0] factor;
+wire [8:0] factor;
 assign factor = 2 ** band;
 always@(posedge clk or negedge rst_n)
 begin
