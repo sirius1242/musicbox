@@ -32,7 +32,7 @@ module uart(
 		//output wen_c,
 		//output reg addr_c
     );
-		localparam bps = 50000000 / 9600 / 4;
+		localparam bps = 50000000 / 9600 / 2;
 		localparam IDLE = 2'b00;
 		localparam RECV = 2'b01;
 		localparam END = 2'b10;
@@ -76,7 +76,7 @@ module uart(
 			begin
 				//state <= state + (bit==7)? 1:0;
 				state <= (bit == 7) ? END:RECV;
-				data <= {data[6:0], UART_RX};
+				data <= {UART_RX, data[7:1]};
 				bit <= bit + 1;
 			end
 			else if(state == END)
