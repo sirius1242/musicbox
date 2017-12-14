@@ -21,8 +21,16 @@
 
 
 module model_ctl(
-	input clk, rst_n, mode, [15:0] SW, [15:0] signal, inc, dec, band, [2:0] sel, [2:0] len,
-	output reg electone, reg music_box, reg writing, reg [1:0] model, reg [15:0] in, add, redu, pre, next, reg [31:0] data,
+	input clk, rst_n, mode, 
+	input [15:0] SW, [15:0] signal,
+	input	inc, dec, 
+	input	[2:0] band, [2:0] sel, [2:0] len,
+	input [7:0] read,
+	output reg electone, reg music_box, reg writing, 
+	output reg [1:0] model, 
+	output reg [15:0] in, 
+	output reg add, redu, pre, next, 
+	output reg [31:0] data,
 	output reg adj
 );
 always@(posedge clk or negedge rst_n)
@@ -45,8 +53,8 @@ begin
 				next = inc;
 				pre = dec;
 				data[2:0] = sel;
-				//data[18:16] = len;
-				data[18:16] = 3;
+				data[15:3] = 0;
+				data[31:16] = len;
 			end
 		2'b01 : 
 			begin
@@ -57,13 +65,23 @@ begin
 				in = SW;
 				add = inc;
 				redu = dec;
+				data[31:3] = 0;
 				data[2:0] = band;
 			end
-		2'b10 : writing = 1;
+		2'b10 :
+			begin
+				writing = 1;
+				music_box = 0;
+				electone = 0;
+				data[31:8] = 0;
+				data[7:0] = read;
+			end
 		2'b11 : 
 			begin
 				writing = 1;
 				music_box = 1;
+				electone = 0;
+				data = 0;
 			end
 	endcase
 end
@@ -97,8 +115,7 @@ module top(
 		wire [15:0] addr;
 		reg [11:0] data_c;
 		wire [31:0] data;
-		wire [11:0] read;
-		assign data [31:20] = read;
+		wire [7:0] read;
 		wire [11:0] q_a, q_b;
 		//reg wen_c = 0;
 		wire pause, dec, inc, add, redu, pre, next;
@@ -108,11 +125,12 @@ module top(
 		no_fitter fit2(left, rst_n, clk, dec);
 		no_fitter fit3(right, rst_n, clk, inc);
 		no_fitter fit4(mode, rst_n, clk, mode_chg);
-		model_ctl model_test(clk, rst_n, mode_chg, SW, signal, inc, dec, band, sel_2, len, electone, music_box, writing, model, in, add, redu, pre, next, data, adj);
+		model_ctl model_test(clk, rst_n, mode_chg, SW, signal, inc, dec, band, sel_2, len, read, electone, music_box, writing, model, in, add, redu, pre, next, data, adj);
 		regfile reg1(clk, rst_n, addr_a, addr_b,  addr_c, data_c, wen_c, sel_2, q_a, q_b, len, addr);
 		read read_box(q_a, clk, rst_n, addr, pause, pre, next, 3'b011, signal, bandi, addr_a, en_2, sel_2);
 		musicbox test(in, rst_n, pause, clk, redu, add, adj, bandi, bell, en, band);
 		//musicbox test(in, rst_n, pause, clk, dec, inc, adj, bandi, bell, LED, en, band);
 		seg seg1(clk, rst_n, data, sel, segment);
-		recv recv_uart(clk, rst_n, UART_RX, read, wen_c, addr_c);
+		//uart recv(clk, rst_n, UART_RX, read, wen_c, addr_c);
+		uart recv(clk, rst_n, UART_RX, read);
 		endmodule
