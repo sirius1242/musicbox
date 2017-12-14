@@ -73,6 +73,7 @@ begin
 				writing = 1;
 				music_box = 0;
 				electone = 0;
+				in = signal;
 				data[31:8] = 0;
 				data[7:0] = read;
 			end
@@ -113,11 +114,11 @@ module top(
 		wire [15:0] signal;
 		wire [15:0] addr_a, addr_b, addr_c;
 		wire [15:0] addr;
-		reg [11:0] data_c;
+		wire [11:0] data_c;
 		wire [31:0] data;
 		wire [7:0] read;
 		wire [11:0] q_a, q_b;
-		//reg wen_c = 0;
+		wire wen_c;
 		wire pause, dec, inc, add, redu, pre, next;
 		wire [2:0] sel_2;
 		assign LED = in;
@@ -131,6 +132,6 @@ module top(
 		musicbox test(in, rst_n, pause, clk, redu, add, adj, bandi, bell, en, band);
 		//musicbox test(in, rst_n, pause, clk, dec, inc, adj, bandi, bell, LED, en, band);
 		seg seg1(clk, rst_n, data, sel, segment);
-		//uart recv(clk, rst_n, UART_RX, read, wen_c, addr_c);
-		uart recv(clk, rst_n, UART_RX, read);
+		uart recv(clk, rst_n, UART_RX, read, data_c, wen_c, addr_c);
+		//uart recv(clk, rst_n, UART_RX, read);
 		endmodule
