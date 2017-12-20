@@ -26,6 +26,7 @@ module model_ctl(
 	input	inc, dec, 
 	input	[2:0] band, [2:0] sel, [2:0] len,
 	input [7:0] read,
+	input [15:0] addr_c,
 	output reg electone, reg music_box, reg writing, 
 	output reg [1:0] model, 
 	output reg [15:0] in, 
@@ -73,7 +74,9 @@ begin
 				writing = 1;
 				music_box = 0;
 				electone = 0;
-				data[31:8] = 0;
+				in = signal;
+				data[17:8] = 0;
+				data[31:18] = addr_c;
 				data[7:0] = read;
 			end
 		2'b11 : 
@@ -107,17 +110,18 @@ module top(
 		wire [1:0] model;
 		wire mode_chg;
 		wire adj;
-		assign uart_test = UART_RX;
+		//assign uart_test = UART_RX;
 		wire [15:0] in;
 		wire [2:0] len;
 		wire [15:0] signal;
 		wire [15:0] addr_a, addr_b, addr_c;
 		wire [15:0] addr;
-		reg [11:0] data_c;
+		wire [11:0] data_c;
 		wire [31:0] data;
 		wire [7:0] read;
 		wire [11:0] q_a, q_b;
-		//reg wen_c = 0;
+		wire wen_c;
+		assign uart_test = wen_c;
 		wire pause, dec, inc, add, redu, pre, next;
 		wire [2:0] sel_2;
 		assign LED = in;
@@ -125,12 +129,12 @@ module top(
 		no_fitter fit2(left, rst_n, clk, dec);
 		no_fitter fit3(right, rst_n, clk, inc);
 		no_fitter fit4(mode, rst_n, clk, mode_chg);
-		model_ctl model_test(clk, rst_n, mode_chg, SW, signal, inc, dec, band, sel_2, len, read, electone, music_box, writing, model, in, add, redu, pre, next, data, adj);
+		model_ctl model_test(clk, rst_n, mode_chg, SW, signal, inc, dec, band, sel_2, len, read, addr_c, electone, music_box, writing, model, in, add, redu, pre, next, data, adj);
 		regfile reg1(clk, rst_n, addr_a, addr_b,  addr_c, data_c, wen_c, sel_2, q_a, q_b, len, addr);
 		read read_box(q_a, clk, rst_n, addr, pause, pre, next, 3'b011, signal, bandi, addr_a, en_2, sel_2);
 		musicbox test(in, rst_n, pause, clk, redu, add, adj, bandi, bell, en, band);
 		//musicbox test(in, rst_n, pause, clk, dec, inc, adj, bandi, bell, LED, en, band);
 		seg seg1(clk, rst_n, data, sel, segment);
 		//uart recv(clk, rst_n, UART_RX, read, wen_c, addr_c);
-		uart recv(clk, rst_n, UART_RX, read);
+		uart recv(clk, rst_n, UART_RX, read, data_c, wen_c, addr_c);
 		endmodule
