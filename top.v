@@ -27,12 +27,14 @@ module model_ctl(
 	input	[2:0] band, [2:0] sel, [2:0] len,
 	input [7:0] read,
 	input [15:0] addr_c,
+	input  wen_c,
 	output reg electone, reg music_box, reg writing, 
 	output reg [1:0] model, 
 	output reg [15:0] in, 
 	output reg add, redu, pre, next, 
 	output reg [31:0] data,
-	output reg adj
+	output reg adj,
+	output reg uart_test
 );
 always@(posedge clk or negedge rst_n)
 begin
@@ -40,6 +42,10 @@ begin
 		model <= 0;
 	else if(mode)
 		model <= model + 1;
+end
+always@(posedge wen_c)
+begin
+	uart_test <= ~uart_test;
 end
 always@(*)
 begin
@@ -121,7 +127,7 @@ module top(
 		wire [7:0] read;
 		wire [11:0] q_a, q_b;
 		wire wen_c;
-		assign uart_test = wen_c;
+		//assign uart_test = (wen_c == 1) ? ~wen_c:wen_c;
 		wire pause, dec, inc, add, redu, pre, next;
 		wire [2:0] sel_2;
 		assign LED = in;
@@ -129,7 +135,7 @@ module top(
 		no_fitter fit2(left, rst_n, clk, dec);
 		no_fitter fit3(right, rst_n, clk, inc);
 		no_fitter fit4(mode, rst_n, clk, mode_chg);
-		model_ctl model_test(clk, rst_n, mode_chg, SW, signal, inc, dec, band, sel_2, len, read, addr_c, electone, music_box, writing, model, in, add, redu, pre, next, data, adj);
+		model_ctl model_test(clk, rst_n, mode_chg, SW, signal, inc, dec, band, sel_2, len, read, addr_c, wen_c, electone, music_box, writing, model, in, add, redu, pre, next, data, adj, uart_test);
 		regfile reg1(clk, rst_n, addr_a, addr_b,  addr_c, data_c, wen_c, sel_2, q_a, q_b, len, addr);
 		read read_box(q_a, clk, rst_n, addr, pause, pre, next, 3'b011, signal, bandi, addr_a, en_2, sel_2);
 		musicbox test(in, rst_n, pause, clk, redu, add, adj, bandi, bell, en, band);

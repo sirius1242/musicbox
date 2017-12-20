@@ -27,12 +27,12 @@ module uart(
 		output reg [7:0] recv,
 		output reg [11:0] read,
 		//output integer cnt,
-		output reg [1:0] state,
-		output reg en,
-		output reg [3:0] bit,
-		output reg [2:0] i,
-		output reg [2:0] bgn,
-		output reg [23:0] tmp,
+		//output reg [1:0] state,
+		//output reg en,
+		//output reg [3:0] bit,
+		//output reg [2:0] i,
+		//output reg [2:0] bgn,
+		//output reg [23:0] tmp,
 		output reg wen_c,
 		output reg addr_c
     );
@@ -41,13 +41,13 @@ module uart(
 		localparam RECV = 2'b01;
 		localparam END = 2'b10;
 		reg [7:0] data;
-		//reg [1:0] state;
-		//reg [23:0] tmp;
+		reg [1:0] state;
+		reg [23:0] tmp;
 		integer cnt;
-		//reg [3:0] bit;
-		//reg en;
-		//reg [2:0] bgn;
-		//reg [2:0] i;
+		reg [3:0] bit;
+		reg en;
+		reg [2:0] bgn;
+		reg [2:0] i;
 		//assign wen_c = 0;
 		always@(posedge clk or negedge rst_n)
 		begin
@@ -55,8 +55,6 @@ module uart(
 			begin
 				en <= 0;
 				cnt <= 0;
-				i <= 0;
-				read <= 0;
 			end
 			else if(cnt >= bps)
 			begin
