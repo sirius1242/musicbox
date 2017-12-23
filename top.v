@@ -120,7 +120,8 @@ module top(
 		wire [15:0] in;
 		wire [2:0] len;
 		wire [15:0] signal;
-		wire [15:0] addr_a, addr_b, addr_c;
+		wire [15:0] addr_a, addr_b;
+		wire [15:0] addr_c;
 		wire [15:0] addr;
 		wire [11:0] data_c;
 		wire [31:0] data;

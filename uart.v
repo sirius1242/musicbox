@@ -34,9 +34,10 @@ module uart(
 		//output reg [2:0] bgn,
 		//output reg [23:0] tmp,
 		output reg wen_c,
-		output reg addr_c
+		output reg [15:0] addr_c
     );
-		localparam bps = 50000000 / 9600 / 2;
+		localparam bps = 50000000 / 9600 /2;
+		localparam syncfre = 6 * bps;
 		localparam IDLE = 2'b00;
 		localparam RECV = 2'b01;
 		localparam END = 2'b10;
@@ -48,6 +49,7 @@ module uart(
 		reg en;
 		reg [2:0] bgn;
 		reg [2:0] i;
+		integer sync;
 		//assign wen_c = 0;
 		always@(posedge clk or negedge rst_n)
 		begin
@@ -55,14 +57,25 @@ module uart(
 			begin
 				en <= 0;
 				cnt <= 0;
+				sync <= 0;
+			end
+			else if(sync == syncfre)
+			begin
+				en <= ~en;
+				sync <= 0;
+				cnt <= 0;
 			end
 			else if(cnt >= bps)
 			begin
 				en <= ~en;
 				cnt <= 0;
+				sync <= sync + 1;
 			end
 			else
+			begin
 				cnt <= cnt + 1;
+				sync <= sync + 1;
+			end
 		end
 		always@(posedge en or negedge rst_n)
 		begin
