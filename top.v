@@ -24,7 +24,7 @@ module model_ctl(
 	input clk, rst_n, mode, 
 	input [15:0] SW, [15:0] signal,
 	input	inc, dec, 
-	input	[2:0] band, [2:0] sel, [2:0] len,
+	input	[2:0] band, [7:0] speed, [15:0] rhythm, beat, sound, en1, en2, [2:0] sel, [2:0] len,
 	input [7:0] read,
 	input [15:0] addr_c,
 	input  wen_c,
@@ -34,7 +34,9 @@ module model_ctl(
 	output reg add, redu, pre, next, 
 	output reg [31:0] data,
 	output reg adj,
-	output reg uart_test
+	output reg uart_test,
+	output reg bell,
+	output reg en
 );
 always@(posedge clk or negedge rst_n)
 begin
@@ -62,6 +64,8 @@ begin
 				data[2:0] = sel;
 				data[15:3] = 0;
 				data[31:16] = len;
+				bell = sound;
+				en = en1;
 			end
 		2'b01 : 
 			begin
@@ -74,6 +78,8 @@ begin
 				redu = dec;
 				data[31:3] = 0;
 				data[2:0] = band;
+				bell = sound;
+				en = en1;
 			end
 		2'b10 :
 			begin
@@ -84,13 +90,20 @@ begin
 				data[17:8] = 0;
 				data[31:18] = addr_c;
 				data[7:0] = read;
+				bell = sound;
+				en = en1;
 			end
 		2'b11 : 
 			begin
 				writing = 1;
 				music_box = 1;
 				electone = 0;
-				data = 0;
+				add = inc;
+				redu = dec;
+				in = rhythm;
+				data[15:0] = speed / 100 * 256 + speed % 100 /10 * 16 + speed % 100 % 10;
+				bell = beat;
+				en = en2;
 			end
 	endcase
 end
@@ -122,10 +135,13 @@ module top(
 		wire [15:0] signal;
 		wire [15:0] addr_a, addr_b;
 		wire [15:0] addr_c;
+		wire [15:0] rhythm;
 		wire [15:0] addr;
 		wire [11:0] data_c;
 		wire [31:0] data;
 		wire [7:0] read;
+		wire [7:0] speed;
+		wire beat, sound, en1, en2;
 		wire [11:0] q_a, q_b;
 		wire wen_c;
 		//assign uart_test = (wen_c == 1) ? ~wen_c:wen_c;
@@ -136,10 +152,12 @@ module top(
 		no_fitter fit2(left, rst_n, clk, dec);
 		no_fitter fit3(right, rst_n, clk, inc);
 		no_fitter fit4(mode, rst_n, clk, mode_chg);
-		model_ctl model_test(clk, rst_n, mode_chg, SW, signal, inc, dec, band, sel_2, len, read, addr_c, wen_c, electone, music_box, writing, model, in, add, redu, pre, next, data, adj, uart_test);
+		metronome metronome1(speed, clk, rst_n, SW, beat, rhythm, en2);
+		freq freq1(clk, redu, add, pause, rst_n, speed);
+		model_ctl model_test(clk, rst_n, mode_chg, SW, signal, inc, dec, band, speed, rhythm, beat, sound, en1, en2, sel_2, len, read, addr_c, wen_c, electone, music_box, writing, model, in, add, redu, pre, next, data, adj, uart_test, bell, en);
 		regfile reg1(clk, rst_n, addr_a, addr_b,  addr_c, data_c, wen_c, sel_2, q_a, q_b, len, addr);
 		read read_box(q_a, clk, rst_n, addr, pause, pre, next, 3'b011, signal, bandi, addr_a, en_2, sel_2);
-		musicbox test(in, rst_n, pause, clk, redu, add, adj, bandi, bell, en, band);
+		musicbox test(in, rst_n, pause, clk, redu, add, adj, bandi, sound, en1, band);
 		//musicbox test(in, rst_n, pause, clk, dec, inc, adj, bandi, bell, LED, en, band);
 		seg seg1(clk, rst_n, data, sel, segment);
 		//uart recv(clk, rst_n, UART_RX, read, wen_c, addr_c);
