@@ -76,8 +76,8 @@ begin
 				in = SW;
 				add = inc;
 				redu = dec;
-				data[31:3] = 0;
-				data[2:0] = band;
+				data[31:4] = 0;
+				data[3:0] = 8 - band;
 				bell = sound;
 				en = en1;
 			end
