@@ -29,22 +29,22 @@ module musicbox(
 	output reg en,
 	output reg [2:0] band
 );
-localparam pitch0 = 50000000/1865;
-localparam pitch1 = 50000000/1976;
-localparam pitch2 = 50000000/2093;
-localparam pitch3 = 50000000/2217;
-localparam pitch4 = 50000000/2349;
-localparam pitch5 = 50000000/2489;
-localparam pitch6 = 50000000/2637;
-localparam pitch7 = 50000000/2794;
-localparam pitch8 = 50000000/2960;
-localparam pitch9 = 50000000/3136;
-localparam pitch10 = 50000000/3322;
-localparam pitch11 = 50000000/3520;
-localparam pitch12 = 50000000/3729;
-localparam pitch13 = 50000000/3951;
-localparam pitch14 = 50000000/4186;
-localparam pitch15 = 50000000/4434;
+localparam pitch0 = 50000000/3729;
+localparam pitch1 = 50000000/3951;
+localparam pitch2 = 50000000/4186;
+localparam pitch3 = 50000000/4434;
+localparam pitch4 = 50000000/4698;
+localparam pitch5 = 50000000/4978;
+localparam pitch6 = 50000000/5274;
+localparam pitch7 = 50000000/5587;
+localparam pitch8 = 50000000/5919;
+localparam pitch9 = 50000000/6271;
+localparam pitch10 = 50000000/6644;
+localparam pitch11 = 50000000/7040;
+localparam pitch12 = 50000000/7458;
+localparam pitch13 = 50000000/7902;
+localparam pitch14 = 50000000/8372;
+localparam pitch15 = 50000000/8869;
 integer tmp, cnt;
 //assign LED = tmp[31:16];
 wire [8:0] factor;
@@ -56,7 +56,7 @@ begin
 		cnt <= 0;
 		bell <= 0;
 		en <= 0;
-		band <= 3'h2;
+		band <= 3'h4;
 	end
 	else if(pause)
 		en <= ~en;
